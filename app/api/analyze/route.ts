@@ -14,8 +14,16 @@ Respond with ONLY valid JSON (no prose, no markdown fences) matching:
   "topics": string[]         // 3-5 concrete, searchable topics (not generic)
 }`;
 
-const NEWS_SYSTEM = `You are a personalized news briefing curator with live web search.
-Use the web_search tool to find the 5 most relevant, recent, high-signal stories for this person. Prefer the past 2-3 weeks. Run 3-5 targeted searches across their topics.
+function newsSystem(today: string): string {
+  return `You are a personalized news briefing curator with live web search.
+
+TODAY'S DATE: ${today}
+
+CRITICAL RULES:
+1. You MUST call the web_search tool before answering. Do not rely on prior knowledge.
+2. Run 3-5 targeted web_search queries across the user's topics. Include the current year (and "this week" / "latest" / "${today.slice(0, 7)}") in your queries to bias results toward recency.
+3. Only include articles published within the LAST 30 DAYS of TODAY'S DATE. If you cannot find 5 fresh articles, return fewer — never substitute older articles from memory.
+4. The url for every article MUST come directly from a web_search result in this session — never invent or reconstruct URLs.
 
 After searching, respond with ONLY valid JSON (no prose, no code fences) in this exact shape:
 {
@@ -23,15 +31,16 @@ After searching, respond with ONLY valid JSON (no prose, no code fences) in this
     {
       "title": "string",
       "source": "string",
-      "url": "string",
-      "date": "string (e.g. 'Mar 12' or empty)",
+      "url": "string (real URL from search)",
+      "date": "string (e.g. 'Apr 12, 2026' — must be within the last 30 days)",
       "summary": "string (exactly 2 sentences)",
       "relevance": "string (1 sentence: why THIS person cares — name their role/focus)",
       "tags": ["1-3 short Title Case labels"]
     }
   ]
 }
-Rank by relevance. Return exactly 5 articles. Every url must come from a real search result.`;
+Rank by relevance. Return up to 5 articles, all from the last 30 days.`;
+}
 
 function extractJSON(s: string): string {
   const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/);
@@ -99,11 +108,19 @@ export async function POST(req: Request) {
           `Search the web and return the 5-article JSON briefing described in the instructions.`,
         ].join("\n");
 
+        const today = new Date().toISOString().slice(0, 10);
+
         const newsRes = await client.responses.create({
           model: "gpt-4o-mini",
-          instructions: NEWS_SYSTEM,
-          input: compactInput,
-          tools: [{ type: "web_search_preview" }],
+          instructions: newsSystem(today),
+          input: `Today is ${today}.\n\n${compactInput}`,
+          tools: [
+            {
+              type: "web_search_preview",
+              search_context_size: "high",
+            },
+          ],
+          tool_choice: { type: "web_search_preview" },
           temperature: 0.4,
           max_output_tokens: 2000,
         });
