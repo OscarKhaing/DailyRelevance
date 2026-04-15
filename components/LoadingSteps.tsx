@@ -33,18 +33,18 @@ export function LoadingSteps({
           >
             <div className="relative mt-1 h-6 w-6 flex-shrink-0">
               {state === "done" ? (
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 to-violet-500 text-white">
+                <div className="step-dot-done flex h-6 w-6 items-center justify-center rounded-full text-white">
                   <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none">
                     <path d="M5 10.5l3 3 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
               ) : state === "active" ? (
                 <>
-                  <span className="absolute inset-0 rounded-full bg-fuchsia-400/30 pulse-dot" />
-                  <span className="absolute inset-1.5 rounded-full bg-gradient-to-br from-fuchsia-400 to-violet-500" />
+                  <span className="step-dot-active-halo absolute inset-0 rounded-full pulse-dot" />
+                  <span className="step-dot-active-core absolute inset-1.5 rounded-full" />
                 </>
               ) : (
-                <span className="absolute inset-1.5 rounded-full border border-white/20" />
+                <span className="step-dot-idle absolute inset-1.5 rounded-full" />
               )}
             </div>
 
@@ -53,9 +53,9 @@ export function LoadingSteps({
                 <div className="font-medium">{s.label}</div>
                 {state === "active" && (
                   <div className="flex gap-1">
-                    <span className="h-1 w-1 rounded-full bg-fuchsia-300 pulse-dot" />
-                    <span className="h-1 w-1 rounded-full bg-fuchsia-300 pulse-dot" style={{ animationDelay: "200ms" }} />
-                    <span className="h-1 w-1 rounded-full bg-fuchsia-300 pulse-dot" style={{ animationDelay: "400ms" }} />
+                    <span className="h-1 w-1 step-dot-pulse rounded-full pulse-dot" />
+                    <span className="h-1 w-1 step-dot-pulse rounded-full pulse-dot" style={{ animationDelay: "200ms" }} />
+                    <span className="h-1 w-1 step-dot-pulse rounded-full pulse-dot" style={{ animationDelay: "400ms" }} />
                   </div>
                 )}
               </div>

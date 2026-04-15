@@ -9,7 +9,7 @@ export function ProfileSummary({ profile }: { profile: Profile }) {
   return (
     <div className="glass fade-up rounded-2xl p-5 md:p-6">
       <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[color:var(--color-muted)]">
-        <span className="inline-block h-1.5 w-1.5 rounded-full bg-fuchsia-400" />
+        <span className="inline-block h-1.5 w-1.5 rounded-full bg-[color:var(--color-accent)]" />
         Reading you as
       </div>
       <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">

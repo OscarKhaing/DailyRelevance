@@ -218,21 +218,24 @@ export default function Home() {
   );
 }
 
+type ThemeName = "neon" | "reading";
+
 function Header({ onReset }: { onReset?: () => void }) {
   return (
     <header className="flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-fuchsia-500 via-violet-500 to-indigo-500 shadow-lg shadow-fuchsia-500/30" />
+        <div className="logo-mark h-7 w-7 rounded-lg" />
         <span className="text-base font-semibold tracking-tight">
           PersonaFeed
         </span>
       </div>
       <div className="flex items-center gap-3">
+        <ThemeToggle />
         {onReset && (
           <button
             onClick={onReset}
             title="Reset profile"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-[color:var(--color-muted)] hover:border-fuchsia-400/40 hover:text-white transition"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[color:var(--surface-border)] bg-[color:var(--accent-muted-bg)] text-[color:var(--color-muted)] transition hover:border-[color:var(--surface-hover-border)] hover:text-[color:var(--color-ink)]"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none">
               <path
@@ -249,11 +252,70 @@ function Header({ onReset }: { onReset?: () => void }) {
           href="https://openai.com"
           target="_blank"
           rel="noreferrer"
-          className="text-xs text-[color:var(--color-muted)] hover:text-white transition"
+          className="text-xs text-[color:var(--color-muted)] transition hover:text-[color:var(--color-ink)]"
         >
           powered by OpenAI
         </a>
       </div>
     </header>
+  );
+}
+
+const THEME_KEY = "personafeed_theme";
+
+function ThemeToggle() {
+  const [theme, setThemeState] = useState<ThemeName>("neon");
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const cur = (document.documentElement.getAttribute("data-theme") as ThemeName) || "neon";
+    setThemeState(cur);
+    setReady(true);
+  }, []);
+
+  function setTheme(t: ThemeName) {
+    setThemeState(t);
+    document.documentElement.setAttribute("data-theme", t);
+    try {
+      localStorage.setItem(THEME_KEY, t);
+    } catch {
+      // ignore
+    }
+  }
+
+  return (
+    <div
+      role="radiogroup"
+      aria-label="Theme"
+      className="flex items-center rounded-lg border border-[color:var(--surface-border)] bg-[color:var(--accent-muted-bg)] p-0.5 text-xs"
+      style={{ opacity: ready ? 1 : 0 }}
+    >
+      <button
+        role="radio"
+        aria-checked={theme === "neon"}
+        onClick={() => setTheme("neon")}
+        className={`rounded-md px-2.5 py-1 transition ${
+          theme === "neon"
+            ? "bg-[color:var(--accent-soft-bg)] text-[color:var(--color-ink)]"
+            : "text-[color:var(--color-muted)] hover:text-[color:var(--color-ink)]"
+        }`}
+        title="Neon — modern, dark, vibrant"
+      >
+        Neon
+      </button>
+      <button
+        role="radio"
+        aria-checked={theme === "reading"}
+        onClick={() => setTheme("reading")}
+        className={`rounded-md px-2.5 py-1 transition ${
+          theme === "reading"
+            ? "bg-[color:var(--accent-soft-bg)] text-[color:var(--color-ink)]"
+            : "text-[color:var(--color-muted)] hover:text-[color:var(--color-ink)]"
+        }`}
+        title="Reading Room — warm, studious, paper-toned"
+      >
+        Reading
+      </button>
+    </div>
   );
 }
