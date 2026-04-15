@@ -27,19 +27,19 @@ export function NewsCard({ article, index }: { article: Article; index: number }
       style={{ animationDelay: `${index * 70}ms` }}
     >
       <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-[0.14em] text-[color:var(--color-muted)]">
-        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/5 text-[10px] text-[color:var(--color-muted)]">
+        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[color:var(--accent-muted-bg)] text-[10px] text-[color:var(--color-muted)]">
           {String(index + 1).padStart(2, "0")}
         </span>
         <span className="truncate">{article.source || host}</span>
         {article.date && (
           <>
-            <span className="text-white/20">•</span>
+            <span className="opacity-40">•</span>
             <span>{article.date}</span>
           </>
         )}
       </div>
 
-      <h3 className="mt-2 text-lg md:text-xl font-semibold leading-snug text-white group-hover:text-fuchsia-100">
+      <h3 className="mt-2 text-lg md:text-xl font-semibold leading-snug text-[color:var(--color-ink)] transition-colors group-hover:text-[color:var(--color-accent)]">
         {article.title}
       </h3>
 
@@ -48,8 +48,8 @@ export function NewsCard({ article, index }: { article: Article; index: number }
       </p>
 
       {article.relevance && (
-        <div className="mt-4 rounded-xl border border-fuchsia-400/15 bg-fuchsia-400/5 p-3">
-          <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-fuchsia-300/80">
+        <div className="relevance mt-4 rounded-xl p-3">
+          <div className="relevance-label text-[10px] font-mono uppercase tracking-[0.18em]">
             Why this matters to you
           </div>
           <p className="mt-1 text-sm text-[color:var(--color-ink)]/90 leading-relaxed">
